@@ -225,7 +225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &742289144
 Rigidbody2D:
   serializedVersion: 4
@@ -427,7 +427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &1148894403
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -491,7 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dad1236388076240a599af5374bb5b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectType: 
+  objectType: Sprite
   textAnimation: 0
   typingSpeed: 0.05
   startsBold: 0
@@ -501,23 +501,19 @@ MonoBehaviour:
   startColor_text: {r: 0, g: 0, b: 0, a: 0}
   currentColor_text: {r: 0, g: 0, b: 0, a: 0}
   startText: 
-  fromSide: 1
-  fromTop: 0
-  fromBottom: 0
-  fromRight: 1
-  fromLeft: 0
-  fromCurrentPosition: 0
-  fadeIn: 0
+  fromSide: None
+  fromCurrentPosition: 1
+  fadeIn: 1
   zoomIn: 0
-  animationTime: 0.75
-  waitTime: 0.05
+  animationTime: 2
+  waitTime: 0
   currentTime: 0
   animationDone: 0
-  showDebugVariables: 0
+  showDebugVariables: 1
   startColor_image: {r: 0, g: 0, b: 0, a: 0}
   currentColor_image: {r: 0, g: 0, b: 0, a: 0}
-  startColor_sprite: {r: 0, g: 0, b: 0, a: 0}
-  currentColor_sprite: {r: 0, g: 0, b: 0, a: 0}
+  startColor_sprite: {r: 1, g: 1, b: 1, a: 1}
+  currentColor_sprite: {r: 1, g: 1, b: 1, a: 0}
   startPos: {x: 0, y: 0, z: 0}
   startPosScale: {x: 10, y: 10, z: 1}
   animatedObject: {fileID: 1148894402}
