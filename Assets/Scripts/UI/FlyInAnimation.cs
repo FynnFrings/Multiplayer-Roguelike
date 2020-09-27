@@ -90,31 +90,16 @@ public class FlyInAnimation : MonoBehaviour
 
     [Tooltip("Tick if you want the GameObject to Fly in from anywhere outside the screen")]
     [BoxGroup("Fly in from outside of Screen")]
-    public bool fromSide;               //If is true: the booleans from beneath are visible in the Inspector!
+    [Dropdown("fromSideOptions")]
+    [OnValueChanged("ChangeFlyInDirection")]
+    public string fromSide;               //If is true: the booleans from beneath are visible in the Inspector!
 
-    [ShowIf("fromSide")] 
-    [Tooltip("Fly in from TOP of Screen")]
-    [BoxGroup("Fly in from outside of Screen")]
-    [Space(5)]
-    public bool fromTop;                //Fly in from top of Screen
+    private string[] fromSideOptions = new string[] { "None", "Top", "Bottom", "Right", "Left" };
 
-    [ShowIf("fromSide")] 
-    [Tooltip("Fly in from BOTTOM of Screen")]
-    [BoxGroup("Fly in from outside of Screen")]
-    [Space(-2)]
-    public bool fromBottom;             //Fly in from bottom of Screen
-
-    [ShowIf("fromSide")] 
-    [Tooltip("Fly in from RIGHT of Screen")]
-    [BoxGroup("Fly in from outside of Screen")]
-    [Space(-2)]
-    public bool fromRight;              //Fly in from right of Screen
-
-    [ShowIf("fromSide")] 
-    [Tooltip("Fly in from LEFT of Screen")]
-    [BoxGroup("Fly in from outside of Screen")]
-    [Space(-2)]
-    public bool fromLeft;               //Fly in from left of Screen
+    private bool fromTop;                //Fly in from top of Screen
+    private bool fromBottom;             //Fly in from bottom of Screen
+    private bool fromRight;              //Fly in from right of Screen
+    private bool fromLeft;               //Fly in from left of Screen
 
     #endregion
 
@@ -239,6 +224,7 @@ public class FlyInAnimation : MonoBehaviour
         animatedObject = gameObject;
 
         ChangeObjectType();
+        ChangeFlyInDirection();
 
         startPos = animatedObject.transform.localPosition;
         startPosScale = animatedObject.transform.localScale;
@@ -249,7 +235,7 @@ public class FlyInAnimation : MonoBehaviour
 
         #region CHECK BOOLEANS
 
-        if (!fromSide)
+        if (fromSide.Equals("None"))
         {
             fromTop = false;
             fromBottom = false;
@@ -305,6 +291,18 @@ public class FlyInAnimation : MonoBehaviour
         if (objectType.Equals("Text")) { isText = true; } else { isText = false; }
         if (objectType.Equals("Image")) { isImage = true; } else { isImage = false; }
         if (objectType.Equals("Sprite")) { isSprite = true; } else { isSprite = false; }
+
+        #endregion
+    }
+
+    private void ChangeFlyInDirection()
+    {
+        #region CHANGE FLY IN DIRECTION
+
+        if (fromSide.Equals("Top")) { fromTop = true; } else { fromTop = false; }
+        if (fromSide.Equals("Bottom")) { fromBottom = true; } else { fromBottom = false; }
+        if (fromSide.Equals("Right")) { fromRight = true; } else { fromRight = false; }
+        if (fromSide.Equals("Left")) { fromLeft = true; } else { fromLeft = false; }
 
         #endregion
     }
