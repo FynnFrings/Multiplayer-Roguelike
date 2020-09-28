@@ -22,6 +22,7 @@ public class FlyInAnimation : MonoBehaviour
 
     private string[] animatedObjects = new string[] { "GameObject", "Text", "Image", "Sprite" };
 
+    private bool isNone;                        //is true if objectType = "None"
     private bool isText;                        //Is true if objectType = "Text"
     private bool isImage;                       //Is true if objectType = "Image"
     private bool isSprite;                      //Is true if objectType = "Sprite"
@@ -39,7 +40,7 @@ public class FlyInAnimation : MonoBehaviour
     [ShowIf(EConditionOperator.And, "textAnimation", "isText")]
     [Tooltip("The speed each character takes to instantiate")]
     [Foldout("Text Animation")]
-    public float typingSpeed = 0.05f;   //The speed each character takes to instantiate
+    public float typingSpeed = 0.04f;   //The speed each character takes to instantiate
 
     [ShowIf(EConditionOperator.And, "textAnimation", "isText")]
     [Tooltip("The last letter instantiated is bold")]
@@ -126,8 +127,6 @@ public class FlyInAnimation : MonoBehaviour
     //Animation Time
     #region ANIMATION TIME: VARIABLES
 
-    [Header("Animation Time")]
-
     [Tooltip("Time in seconds the animation takes to finish")]
     [Foldout("Animation Settings")]
     public float animationTime = 0.75f; //How long the Animation lasts in Seconds
@@ -147,6 +146,19 @@ public class FlyInAnimation : MonoBehaviour
     [Foldout("Animation Settings")]
     [ReadOnly]
     public bool animationDone;          //Is true when the animation is done
+
+    #endregion
+
+    //Sound Effects
+    #region SOUND EFFECTS : VARIABLES
+
+    [Foldout("Sound Effects")]
+    public bool soundEffects;
+
+    [ShowIf("soundEffects")]
+    [Tooltip("Plays when letters Appear of Text Animation")]
+    [Foldout("Sound Effects")]
+    public AudioClip letterAppear;
 
     #endregion
 
@@ -288,6 +300,7 @@ public class FlyInAnimation : MonoBehaviour
     {
         #region CHANGE OBJECT TYPE
 
+        if (objectType.Equals("None")) { isNone = true; } else { isNone = false; }
         if (objectType.Equals("Text")) { isText = true; } else { isText = false; }
         if (objectType.Equals("Image")) { isImage = true; } else { isImage = false; }
         if (objectType.Equals("Sprite")) { isSprite = true; } else { isSprite = false; }
@@ -480,6 +493,11 @@ public class FlyInAnimation : MonoBehaviour
 
             #endregion
 
+            if(letter != ' ')
+            {
+                PlaySoundEffect("letterAppear");
+            }
+
             animatedObject.gameObject.GetComponent<TextMeshProUGUI>().text += modifystart + letter + modifyend;
             yield return new WaitForSeconds(typingSpeed);
 
@@ -490,6 +508,15 @@ public class FlyInAnimation : MonoBehaviour
         textAnimationDone = true;
 
         #endregion
+    }
+
+    public void PlaySoundEffect(string sfx)
+    {
+        if(sfx.Equals("letterAppear"))
+        {
+            GetComponent<AudioSource>().clip = letterAppear;
+            GetComponent<AudioSource>().Play();
+        }
     }
 }
 
