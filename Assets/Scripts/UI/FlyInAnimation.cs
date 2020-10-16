@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿/** HEADER
+ *  animates UI elements
+ * 
+ * @author  (Fynn Frings) 
+ * @Created (01.09.2020)
+ * @Edit    (23.09.2020)
+ */
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -101,6 +108,8 @@ public class FlyInAnimation : MonoBehaviour
     private bool fromBottom;             //Fly in from bottom of Screen
     private bool fromRight;              //Fly in from right of Screen
     private bool fromLeft;               //Fly in from left of Screen
+
+    public bool flyIn = true; //if is true animation flies in, else animation flies out
 
     #endregion
 
@@ -207,6 +216,12 @@ public class FlyInAnimation : MonoBehaviour
 
     [ShowIf("showDebugVariables")]
     [Foldout("Debug")]
+    [ReadOnly]
+    [SerializeField]
+    private Vector3 endPos;               //Position at start
+
+    [ShowIf("showDebugVariables")]
+    [Foldout("Debug")]
     [ShowAssetPreview]
     [ReadOnly]
     public GameObject animatedObject;       //Object that is being Animated
@@ -220,7 +235,8 @@ public class FlyInAnimation : MonoBehaviour
     {
         #region START
 
-        //InitializeData();
+        startPos = animatedObject.transform.localPosition;
+        startPosScale = animatedObject.transform.localScale;
 
         PlayAnimation();
 
@@ -229,7 +245,7 @@ public class FlyInAnimation : MonoBehaviour
 
     //Initializes Data
     [Button("Initialize", enabledMode: EButtonEnableMode.Editor)]
-    private void InitializeData()
+    public void InitializeData()
     {
         #region INITIALIZE
 
@@ -237,9 +253,6 @@ public class FlyInAnimation : MonoBehaviour
 
         ChangeObjectType();
         ChangeFlyInDirection();
-
-        startPos = animatedObject.transform.localPosition;
-        startPosScale = animatedObject.transform.localScale;
 
         currentTime = 0f;
         animationDone = false;
@@ -323,14 +336,32 @@ public class FlyInAnimation : MonoBehaviour
     //Plays Animation
     [Button("Play Again", enabledMode: EButtonEnableMode.Playmode)]
     [EnableIf("animationDone")]
-    private void PlayAnimation()
+    public void PlayAnimation()
     {
         #region PLAY ANIMATION
 
         InitializeData();
 
         //Start Animation
-        StartCoroutine(StartAnimation());
+        if (flyIn)
+        {
+            PlayFlyInAnimation();
+        }
+        else
+        {
+            PlayFlyOutAnimation();
+        }
+
+        #endregion
+    }
+
+    //Plays FlyIn Animation
+    private void PlayFlyInAnimation()
+    {
+        #region PLAY ANIMATION
+
+        //Start Animation
+        StartCoroutine(StartAnimation(true));
 
         if (textAnimation)
         {
@@ -341,8 +372,19 @@ public class FlyInAnimation : MonoBehaviour
         #endregion
     }
 
+    //Plays FlyOut Animation
+    private void PlayFlyOutAnimation()
+    {
+        #region PLAY ANIMATION
+
+        //Start Animation
+        StartCoroutine(StartAnimation(false));
+
+        #endregion
+    }
+
     //Start Animation
-    IEnumerator StartAnimation()
+    IEnumerator StartAnimation(bool flyIn)
     {
         #region START ANIMATION
 
@@ -351,7 +393,7 @@ public class FlyInAnimation : MonoBehaviour
             currentTime += Time.deltaTime / animationTime;
 
             //Animation
-            FlyInFromOutsideOfScreen();
+            FromOutsideOfScreen(flyIn);
 
             //Fly in from current Position
             FlyInFromCurrentPosition();
@@ -385,7 +427,14 @@ public class FlyInAnimation : MonoBehaviour
             animatedObject.GetComponent<SpriteRenderer>().color = startColor_sprite;
         }
 
-        animatedObject.transform.localPosition = startPos;
+        if (flyIn)
+        {
+            animatedObject.transform.localPosition = startPos;
+        }
+        else
+        {
+            animatedObject.transform.localPosition = endPos;
+        }
 
         #endregion
 
@@ -395,33 +444,77 @@ public class FlyInAnimation : MonoBehaviour
         #endregion
     }
 
-    private void FlyInFromOutsideOfScreen()
+    private void FromOutsideOfScreen(bool flyIn)
     {
         #region FLY IN FROM DIFFERENT POSITION
 
+        #region FROM TOP
+
         //Fly in from Top
-        if (fromTop)
+        if (fromTop && flyIn)
         {
-            animatedObject.transform.localPosition = Vector3.Lerp(new Vector3(0, Screen.height, 0), startPos, Mathf.SmoothStep(0f, 1f, currentTime));
+            endPos = new Vector3(0, Screen.height, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, currentTime));
         }
+        //Fly out to Top
+        else if (fromTop && !flyIn)
+        {
+            endPos = new Vector3(0, Screen.height, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, currentTime));
+        }
+
+        #endregion
+
+        #region FROM BOTTOM
 
         //Fly in from Bottom
-        else if (fromBottom)
+        else if (fromBottom && flyIn)
         {
-            animatedObject.transform.localPosition = Vector3.Lerp(new Vector3(0, -Screen.height, 0), startPos, Mathf.SmoothStep(0f, 1f, currentTime));
+            endPos = new Vector3(0, -Screen.height, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, currentTime));
         }
+        //Fly out to Bottom
+        else if (fromBottom && !flyIn)
+        {
+            endPos = new Vector3(0, -Screen.height, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, currentTime));
+        }
+
+        #endregion
+
+        #region FROM RIGHT
 
         //Fly in from Right
-        else if (fromRight)
+        else if (fromRight && flyIn)
         {
-            animatedObject.transform.localPosition = Vector3.Lerp(new Vector3(Screen.width, startPos.y, 0), startPos, Mathf.SmoothStep(0f, 1f, currentTime));
+            endPos = new Vector3(Screen.width, startPos.y, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, currentTime));
+        }
+        //Fly out to Right
+        else if (fromRight && !flyIn)
+        {
+            endPos = new Vector3(Screen.width, startPos.y, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, currentTime));
         }
 
+        #endregion
+
+        #region FROM LEFT
+
         //Fly in from Left
-        else if (fromLeft)
+        else if (fromLeft && flyIn)
         {
-            animatedObject.transform.localPosition = Vector3.Lerp(new Vector3(-Screen.width, startPos.y, 0), startPos, Mathf.SmoothStep(0f, 1f, currentTime));
+            endPos = new Vector3(-Screen.width, startPos.y, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(endPos, startPos, Mathf.SmoothStep(0f, 1f, currentTime));
         }
+        //Fly out to Left
+        else if (fromLeft && flyIn)
+        {
+            endPos = new Vector3(-Screen.width, startPos.y, 0);
+            animatedObject.transform.localPosition = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, currentTime));
+        }
+
+        #endregion
 
         #endregion
     }
@@ -493,7 +586,22 @@ public class FlyInAnimation : MonoBehaviour
 
             #endregion
 
-            if(letter != ' ')
+            #region WAIT FOR ANIMATION TO START
+
+            //Wait until Start of Animation (AFTER first Frame)
+            if (waitTime > 0)
+            {
+                yield return new WaitForSeconds(waitTime);
+                waitTime = 0f;
+            }
+
+            #endregion
+
+            if (letter != ' ' && !fromCurrentPosition)
+            {
+                PlaySoundEffect("letterAppear");
+            }
+            else if(fromCurrentPosition)
             {
                 PlaySoundEffect("letterAppear");
             }

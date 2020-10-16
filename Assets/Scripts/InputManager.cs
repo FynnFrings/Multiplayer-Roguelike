@@ -3,7 +3,7 @@
  * 
  * @author  (Fynn Frings) 
  * @Created (23.09.2020)
- * @Edit    (23.09.2020)
+ * @Edit    (14.10.2020)
  */
 
 using System.Collections;
@@ -11,17 +11,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 
-public class UserInput : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
     #region ATTRIBUTES
 
     //General
-    public static UserInput instance; //Can be called from anywhere
+    public static InputManager instance; //Can be called from anywhere
 
     //Movement Input
-    [Header("Movement Input")]
-    [SerializeField] [ReadOnly] private Vector2 movementInput;
-    [SerializeField] [ReadOnly] private bool attackInput;
+    [Foldout("Movement Input")]
+    [SerializeField] [ReadOnly] internal Vector2 movementInput;
+    [Foldout("Movement Input")]
+    [SerializeField] [ReadOnly] internal bool attackInput;
 
     #endregion
 
@@ -98,13 +99,4 @@ public class UserInput : MonoBehaviour
         #endregion
     }
 
-    #region GET & SET METHODS
-
-    //Gets the value of movementAxis
-    public Vector2 GetMovementInput() { return movementInput; }
-
-    //Gets the value of attackInput
-    public bool GetAttackInput() { return attackInput; }
-
-    #endregion
 }
